@@ -24,16 +24,18 @@ function getUserIdFromToken(request: NextRequest) {
 ========================= */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = getUserIdFromToken(request);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const company = await prisma.company.findFirst({
     where: {
-      id: params.id,
+      id,
       userId
     }
   });
@@ -50,14 +52,14 @@ export async function GET(
 ========================= */
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = getUserIdFromToken(request);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = context.params;
+  const { id } = await params;
   const { razaoSocial, nomeFantasia, cnpj } = await request.json();
 
   const result = await prisma.company.updateMany({
@@ -77,16 +79,18 @@ export async function PUT(
 ========================= */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = getUserIdFromToken(request);
   if (!userId) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { id } = await params;
+
   const deleted = await prisma.company.deleteMany({
     where: {
-      id: params.id,
+      id,
       userId
     }
   });

@@ -24,6 +24,13 @@ export function ReportForm({ reportId, title = '', content = [], status = 'rascu
   const [questions, setQuestions] = useState<Question[]>(content);
   const [formStatus, setFormStatus] = useState(status);
 
+  // Atualiza o estado quando as props mudarem (importante para edição)
+  useEffect(() => {
+    setFormTitle(title);
+    setQuestions(content);
+    setFormStatus(status);
+  }, [title, content, status, reportId]);
+
   const addQuestion = () => {
     const newQuestion: Question = {
       id: Date.now().toString(),
