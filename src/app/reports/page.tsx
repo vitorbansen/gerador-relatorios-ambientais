@@ -436,130 +436,62 @@ export default function ReportsPage() {
 
       {/* Modal de Templates */}
       {showTemplateModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
-            {/* Header */}
-            <div className="relative px-6 sm:px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-blue-50">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
-                    Escolher Template
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    Selecione um relatório existente como base
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowTemplateModal(false)}
-                  className="flex-shrink-0 p-2 rounded-full hover:bg-white/80 transition-all duration-200 group"
-                >
-                  <X size={24} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h2 className="text-2xl font-bold text-gray-800">Escolher Template de Relatório</h2>
+              <button
+                onClick={() => setShowTemplateModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={24} />
+              </button>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-6">
               {loadingTemplates ? (
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="relative">
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600"></div>
-                    <div className="absolute inset-0 rounded-full bg-purple-100/20 animate-pulse"></div>
-                  </div>
-                  <p className="mt-6 text-gray-500 font-medium">Carregando templates...</p>
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                 </div>
               ) : availableReports.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 px-4">
-                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <Copy size={32} className="text-gray-400" />
-                  </div>
-                  <p className="text-gray-500 text-lg font-medium mb-2">Nenhum template disponível</p>
-                  <p className="text-gray-400 text-sm text-center max-w-md">
-                    Crie alguns relatórios primeiro para usá-los como templates
-                  </p>
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-lg">Nenhum relatório disponível como template</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {availableReports.map(report => (
                     <div
                       key={report.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
                       onClick={() => handleUseTemplate(report)}
-                      className="group relative bg-white rounded-xl border-2 border-gray-100 p-5 hover:border-purple-200 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
                     >
-                      {/* Gradient overlay on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-blue-500/0 group-hover:from-purple-500/5 group-hover:to-blue-500/5 transition-all duration-300" />
-                      
-                      <div className="relative">
-                        {/* Header with status badge */}
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <h3 className="font-bold text-gray-900 text-base sm:text-lg leading-tight line-clamp-2 flex-1 group-hover:text-purple-600 transition-colors">
-                            {report.title}
-                          </h3>
-                          <span
-                            className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                              report.status === 'finalizado'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-amber-100 text-amber-700'
-                            }`}
-                          >
-                            {report.status === 'finalizado' ? '✓ Finalizado' : '◐ Rascunho'}
-                          </span>
-                        </div>
-
-                        {/* Company name */}
-                        {report.companyName && (
-                          <div className="flex items-center gap-2 mb-3 text-xs text-gray-500">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                            <span className="font-medium truncate">{report.companyName}</span>
-                          </div>
-                        )}
-
-                        {/* Questions count */}
-                        <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors">
-                            <span className="font-bold text-purple-600">{report.content.length}</span>
-                          </div>
-                          <span className="font-medium">
-                            {report.content.length === 1 ? 'pergunta' : 'perguntas'}
-                          </span>
-                        </div>
-
-                        {/* Action button */}
-                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                          <span className="text-sm font-medium text-gray-400 group-hover:text-purple-600 transition-colors">
-                            Clique para usar
-                          </span>
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 group-hover:bg-purple-600 transition-all duration-300">
-                            <svg 
-                              className="w-4 h-4 text-purple-600 group-hover:text-white transition-colors group-hover:translate-x-0.5" 
-                              fill="none" 
-                              viewBox="0 0 24 24" 
-                              stroke="currentColor"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
-                        </div>
+                      <h3 className="font-bold text-gray-800 mb-2">{report.title}</h3>
+                      {report.companyName && (
+                        <p className="text-xs text-gray-500 mb-2">
+                          Empresa: {report.companyName}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-600 mb-2">
+                        {report.content.length} pergunta(s)
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                            report.status === 'finalizado'
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
+                        >
+                          {report.status === 'finalizado' ? 'Finalizado' : 'Rascunho'}
+                        </span>
+                        <button className="text-blue-500 hover:text-blue-700 text-sm font-medium">
+                          Usar este →
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 sm:px-8 py-4 border-t border-gray-100 bg-white">
-              <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500">
-                <span className="font-medium">
-                  {availableReports.length > 0 && `${availableReports.length} template${availableReports.length !== 1 ? 's' : ''} disponív${availableReports.length !== 1 ? 'eis' : ''}`}
-                </span>
-                <button
-                  onClick={() => setShowTemplateModal(false)}
-                  className="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-medium transition-colors"
-                >
-                  Fechar
-                </button>
-              </div>
             </div>
           </div>
         </div>

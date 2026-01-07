@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Save, X, FileText, GripVertical } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -24,7 +24,6 @@ export function ReportForm({ reportId, title = '', content = [], status = 'rascu
   const [questions, setQuestions] = useState<Question[]>(content);
   const [formStatus, setFormStatus] = useState(status);
 
-  // Atualiza o estado quando as props mudarem (importante para edição)
   useEffect(() => {
     setFormTitle(title);
     setQuestions(content);
@@ -60,133 +59,183 @@ export function ReportForm({ reportId, title = '', content = [], status = 'rascu
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        {reportId ? 'Editar Relatório' : 'Novo Relatório'}
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Título do Relatório
-          </label>
-          <input
-            type="text"
-            value={formTitle}
-            onChange={(e) => setFormTitle(e.target.value)}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ex: Relatório Mensal - Janeiro"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <select
-            value={formStatus}
-            onChange={(e) => setFormStatus(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="rascunho">Rascunho</option>
-            <option value="finalizado">Finalizado</option>
-          </select>
-        </div>
-
-        <div className="border-t pt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Perguntas e Respostas</h3>
-            <button
-              type="button"
-              onClick={addQuestion}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
-            >
-              <Plus size={16} />
-              Adicionar Pergunta
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {questions.map((question, index) => (
-              <div key={question.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-medium text-gray-700">Pergunta {index + 1}</h4>
-                  <button
-                    type="button"
-                    onClick={() => removeQuestion(question.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Pergunta
-                    </label>
-                    <input
-                      type="text"
-                      value={question.text}
-                      onChange={(e) => updateQuestion(question.id, 'text', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      placeholder="Digite a pergunta"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Resposta
-                    </label>
-                    <textarea
-                      value={question.answer}
-                      onChange={(e) => updateQuestion(question.id, 'answer', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      rows={3}
-                      placeholder="Digite a resposta"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Upload de Imagem (URL)
-                    </label>
-                    <input
-                      type="text"
-                      value={question.imageUrl || ''}
-                      onChange={(e) => updateQuestion(question.id, 'imageUrl', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                      placeholder="URL da imagem"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {questions.length === 0 && (
-            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-              <p className="text-gray-500">Nenhuma pergunta adicionada</p>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+              <FileText className="w-5 h-5 text-blue-600" />
             </div>
-          )}
-        </div>
-
-        <div className="flex gap-3 pt-4 border-t">
-          <button
-            type="submit"
-            className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-          >
-            {reportId ? 'Atualizar' : 'Criar'}
-          </button>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {reportId ? 'Editar Relatório' : 'Novo Relatório'}
+              </h2>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {reportId ? 'Atualize as informações do relatório' : 'Preencha os campos para criar um novo relatório'}
+              </p>
+            </div>
+          </div>
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors font-medium"
+            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      <div>
+        {/* Form Content */}
+        <div className="p-6 space-y-6">
+          {/* Title and Status Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Título do Relatório
+              </label>
+              <input
+                type="text"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                required
+                className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="Ex: Relatório Mensal - Janeiro"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                value={formStatus}
+                onChange={(e) => setFormStatus(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              >
+                <option value="rascunho">Rascunho</option>
+                <option value="finalizado">Finalizado</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Questions Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Perguntas e Respostas</h3>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {questions.length} {questions.length === 1 ? 'pergunta adicionada' : 'perguntas adicionadas'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={addQuestion}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Adicionar Pergunta
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {questions.map((question, index) => (
+                <div key={question.id} className="bg-gray-50 border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Pergunta {index + 1}</h4>
+                        <p className="text-xs text-gray-500 mt-0.5">Preencha a pergunta e resposta</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeQuestion(question.id)}
+                      className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-600 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Pergunta
+                      </label>
+                      <input
+                        type="text"
+                        value={question.text}
+                        onChange={(e) => updateQuestion(question.id, 'text', e.target.value)}
+                        className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="Digite a pergunta"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Resposta
+                      </label>
+                      <textarea
+                        value={question.answer}
+                        onChange={(e) => updateQuestion(question.id, 'answer', e.target.value)}
+                        className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                        rows={4}
+                        placeholder="Digite a resposta"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        URL da Imagem (opcional)
+                      </label>
+                      <input
+                        type="text"
+                        value={question.imageUrl || ''}
+                        onChange={(e) => updateQuestion(question.id, 'imageUrl', e.target.value)}
+                        className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        placeholder="https://exemplo.com/imagem.jpg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {questions.length === 0 && (
+              <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                  <FileText className="w-6 h-6 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">Nenhuma pergunta adicionada</p>
+                <p className="text-sm text-gray-400 mt-1">Clique em "Adicionar Pergunta" para começar</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
           >
             Cancelar
           </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm shadow-sm"
+          >
+            <Save className="w-4 h-4" />
+            {reportId ? 'Atualizar Relatório' : 'Criar Relatório'}
+          </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
