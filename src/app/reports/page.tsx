@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ReportCard } from '@/components/ReportCard';
 import { ReportForm } from '@/components/ReportForm';
-import { Plus, ArrowLeft, CheckCircle, XCircle, AlertCircle, Copy, X } from 'lucide-react';
+import { Plus, ArrowLeft, CheckCircle, XCircle, AlertCircle, Copy, X, Search } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -52,6 +52,7 @@ export default function ReportsPage() {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [availableReports, setAvailableReports] = useState<Report[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const showToast = (message: string, type: 'success' | 'error' | 'info') => {
     const id = toastId;
@@ -325,6 +326,11 @@ export default function ReportsPage() {
     }
   };
 
+  // Filtrar relatórios pelo termo de busca
+  const filteredReports = reports.filter(report =>
+    report.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -396,31 +402,62 @@ export default function ReportsPage() {
             )}
           </div>
         ) : (
-          <div className="flex gap-3 mb-8">
-            <button
-              onClick={handleNewReport}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-            >
-              <Plus size={20} />
-              Novo Relatório
-            </button>
-            <button
-              onClick={handleNewReportFromTemplate}
-              className="flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
-            >
-              <Copy size={20} />
-              Usar Template
-            </button>
-          </div>
+          <>
+            <div className="flex gap-3 mb-6">
+              <button
+                onClick={handleNewReport}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+              >
+                <Plus size={20} />
+                Novo Relatório
+              </button>
+              <button
+                onClick={handleNewReportFromTemplate}
+                className="flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium"
+              >
+                <Copy size={20} />
+                Usar Template
+              </button>
+            </div>
+
+            {/* Barra de Filtro */}
+            <div className="mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  placeholder="Filtrar por título..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
+              {searchTerm && (
+                <p className="mt-2 text-sm text-gray-600">
+                  {filteredReports.length} relatório(s) encontrado(s)
+                </p>
+              )}
+            </div>
+          </>
         )}
 
-        {!showForm && reports.length === 0 ? (
+        {!showForm && filteredReports.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-md">
-            <p className="text-gray-500 text-lg">Nenhum relatório cadastrado</p>
+            <p className="text-gray-500 text-lg">
+              {searchTerm ? 'Nenhum relatório encontrado com esse título' : 'Nenhum relatório cadastrado'}
+            </p>
           </div>
         ) : !showForm && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reports.map(report => (
+            {filteredReports.map(report => (
               <ReportCard
                 key={report.id}
                 report={report}
